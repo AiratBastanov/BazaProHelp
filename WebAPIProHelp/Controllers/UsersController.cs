@@ -11,7 +11,7 @@ using WebAppMacroSociety.Randoms;
 
 namespace WebAPIProHelp.Controllers
 {
-    [Route("GlutenAppAPI/User")]
+    [Route("glutenappapi/user")]
     [ApiController]
     public class UsersController : Controller
     {
@@ -42,7 +42,7 @@ namespace WebAPIProHelp.Controllers
             return user;
         }
 
-        [HttpGet("CheckEmail")]
+        [HttpGet("checkemail")]
         public async Task<int> GetEmailandCheck(string email)
         {
             emailService = new EmailService();
