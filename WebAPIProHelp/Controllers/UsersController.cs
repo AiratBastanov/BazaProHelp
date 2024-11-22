@@ -25,12 +25,6 @@ namespace WebAPIProHelp.Controllers
             _context = context;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
-        {
-            return await _context.Users.ToListAsync();
-        }
-
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
@@ -42,30 +36,50 @@ namespace WebAPIProHelp.Controllers
             return user;
         }
 
-        [HttpGet("checkemail")]
-        public async Task<int> GetEmailandCheck(string email)
+        [HttpGet("email")]
+        public async Task<ActionResult<User>> GetUserByEmail(string email)
         {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+            if (user == null)
+                return NotFound();
+
+            return user;
+        }
+
+        [HttpGet("checkemail")]
+        public async Task<ActionResult<int>> GetEmailandCheck(string email)
+        {
+            // Проверяем, есть ли пользователь с указанным email
+            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (existingUser == null)
+                return NotFound("Пользователь с таким email не найден.");
+
             emailService = new EmailService();
             createVerificationCode = new CreateVerificationCode();
             VerificationCode = createVerificationCode.RandomInt(6);
-            string bodyMessage = @"Проверочный код: " + VerificationCode.ToString();
+
+            string bodyMessage = $"Проверочный код: {VerificationCode}";
             await emailService.SendEmailAsync(email, "GlutenApp", bodyMessage);
+
             return VerificationCode;
         }
+
 
         [HttpPost]
         public async Task<ActionResult<User>> CreateUser(User user)
         {
+            if (_context.Users.Any(u => u.Email == user.Email))
+                return Conflict("Пользователь с таким email уже существует.");
+
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, user);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, User user)
+        [HttpPut]
+        public async Task<IActionResult> UpdateUser(User user)
         {
-            if (id != user.UserId)
-                return BadRequest();
 
             _context.Entry(user).State = EntityState.Modified;
 
@@ -75,7 +89,7 @@ namespace WebAPIProHelp.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_context.Users.Any(e => e.UserId == id))
+                if (!_context.Users.Any(e => e.UserId == user.UserId))
                     return NotFound();
                 throw;
             }
