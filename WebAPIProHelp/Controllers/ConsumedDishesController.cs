@@ -9,7 +9,7 @@ using WebAPIProHelp.Models;
 
 namespace WebAPIProHelp.Controllers
 {
-    [Route("GlutenAppAPI/ConsumedDish")]
+    [Route("glutenappapi/consumeddish")]
     [ApiController]
     public class ConsumedDishesController : Controller
     {
@@ -20,7 +20,7 @@ namespace WebAPIProHelp.Controllers
             _context = context;
         }
 
-        [HttpGet("user/{userId}")]
+        [HttpGet("userId")]
         public async Task<ActionResult<IEnumerable<ConsumedDish>>> GetDishesByUser(int userId)
         {
             return await _context.ConsumedDishes.Where(d => d.UserId == userId).ToListAsync();

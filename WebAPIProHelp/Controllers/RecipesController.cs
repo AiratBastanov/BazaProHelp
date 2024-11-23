@@ -9,7 +9,7 @@ using WebAPIProHelp.Models;
 
 namespace WebAPIProHelp.Controllers
 {
-    [Route("GlutenAppAPI/Recipe")]
+    [Route("glutenappapi/recipe")]
     [ApiController]
     public class RecipesController : Controller
     {
@@ -26,7 +26,7 @@ namespace WebAPIProHelp.Controllers
             return await _context.Recipes.ToListAsync();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("id")]
         public async Task<ActionResult<Recipe>> GetRecipe(int id)
         {
             var recipe = await _context.Recipes.FindAsync(id);
