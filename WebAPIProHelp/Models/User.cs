@@ -16,7 +16,7 @@ namespace WebAPIProHelp.Models
         public byte[]? ProfileImage { get; set; }
         public int RoleId { get; set; }
 
-        public virtual Role Role { get; set; } = null!;
+        public virtual Role? Role { get; set; }
         public virtual ICollection<ConsumedDish> ConsumedDishes { get; set; }
     }
 }
